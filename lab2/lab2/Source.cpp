@@ -8,8 +8,8 @@
 class Analyst
 {
 public:
-    Analyst() {};
-    Analyst(const std::string& str) : text(str) {};
+    Analyst() : checkRule(true){};
+    Analyst(const std::string& str) : text(str), checkRule(true) {};
     ~Analyst() {};
 
     // methods
@@ -22,6 +22,12 @@ public:
 
     void analyse()
     {
+        if (!checkRules())
+        {
+            checkRule = false;
+            return;
+        }
+
         std::vector<std::vector<std::string>> data = parseText(text);
 
         for (size_t i = 0; i < data.size(); i++)
@@ -46,6 +52,10 @@ public:
 
     void save()
     {
+        if (!checkRule)
+        {
+            return;
+        }
         unsigned int countId = 1;
         std::map<std::string, unsigned int> data;
 
@@ -87,6 +97,31 @@ public:
 
 private:
 
+    bool checkRules()
+    {
+        unsigned int cLeft = std::count(text.begin(), text.end(), '(');
+        unsigned int cRight = std::count(text.begin(), text.end(), ')');
+
+        if (cLeft != cRight)
+        {
+            cLeft > cRight ? std::cout << "symbol ')' was expected!\n" : std::cout << "symbol '(' was expected!\n";
+            return false;
+        }
+
+        for (size_t i = 0; i < text.size(); i++)
+        {
+            i = text.find(')', i);
+            if (text[i + 1] != ';' && i != std::string::npos)
+            {
+                std::cout << "symbol ';' was expected!\n";
+                return false;
+            }
+            if (i == std::string::npos)
+            {
+                break;
+            }
+        }
+    }
     std::vector<std::vector<std::string>> parseText(std::string str)
     {
         std::vector<std::vector<std::string>> data;
@@ -180,6 +215,7 @@ private:
     };
     std::string text;
     std::vector<std::pair<std::string, type>> variables;
+    bool checkRule;
 };
 
 int main()
