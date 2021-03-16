@@ -13,7 +13,7 @@ public:
     Analyst(const std::string& str) : text(str), checkRule(true), regular((
         "(\\w*)"
         "([\(])"
-        "([\\a-zA-Z\,]+)"
+        "([a-zIVX\,]+)"
         "([\)])"
         "([\;])"
         )) {};
@@ -90,9 +90,9 @@ private:
     bool checkRulesAndParse()
     {
         std::cmatch res;
-
         std::vector<std::string> procs;
         text.push_back(';');
+
         while (std::count(text.begin(), text.end(), ';') != 0)
         {
             size_t pos = text.find(';');
@@ -149,7 +149,10 @@ private:
                 if (res[5] != ';')
                 {
                     std::cout << "[ERROR] ';' was expected!\n";
+                    return false;
                 }
+                
+                std::cout << "[ERROR] unexpected arguments!\n";
 
                 return false;
             }
@@ -172,7 +175,7 @@ private:
 
 int main()
 {
-    std::string text = "";
+    std::string text = "q(v,a)proc(cc);";
     std::cout << "Enter text: ";
     std::getline(std::cin, text);
 
