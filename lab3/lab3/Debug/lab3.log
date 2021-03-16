@@ -1,0 +1,5 @@
+﻿  Source.cpp
+D:\university\labs\lab3\lab3\Source.cpp(15,9): warning C4129: (: неизвестная escape-последовательность
+D:\university\labs\lab3\lab3\Source.cpp(16,9): warning C4129: ,: неизвестная escape-последовательность
+D:\university\labs\lab3\lab3\Source.cpp(17,9): warning C4129: ): неизвестная escape-последовательность
+  lab3.vcxproj -> D:\university\labs\lab3\Debug\lab3.exe
