@@ -13,8 +13,9 @@ public:
     Analyst(const std::string& str) : text(str), checkRule(true), regular((
         "(\\w*)"
         "([\(])"
-        "([\\a-zIVX\,]+)"
+        "([\\a-zA-Z\,]+)"
         "([\)])"
+        "([\;])"
         )) {};
     ~Analyst() {};
 
@@ -40,7 +41,7 @@ public:
     {
         if (!checkRule)
         {
-            std::cout << "[INFO] Error is in expression!\n";
+            std::cout << "[ERROR] Error is in expression!\n";
             return;
         }
         unsigned int countId = 1;
@@ -88,26 +89,29 @@ private:
 
     bool checkRulesAndParse()
     {
-        std::vector<std::string> procs;
+        std::cmatch res;
 
+        std::vector<std::string> procs;
+        text.push_back(';');
         while (std::count(text.begin(), text.end(), ';') != 0)
         {
             size_t pos = text.find(';');
 
-            std::string temp = text.substr(0, pos);
+            std::string temp = text.substr(0, pos + 1);
             text.erase(0, pos + 1);
             procs.push_back(temp);
         }
-
-        procs.push_back(text);
-
-        std::cmatch res;
 
         std::cout << "\n\n";
         for (size_t i = 0; i < procs.size(); i++)
         {
             if (std::regex_match(procs[i].c_str(), res, regular))
             {
+                if (res[2] != '(' && res[4] != ')')
+                {
+                    std::cout << "[ERROR] symbol ')' or '(' was expected\n";
+                    return false;
+                }
                 variables.push_back(std::make_pair(res[1], type::PROC_NAME));
 
                 std::vector<std::string> params;
@@ -132,10 +136,21 @@ private:
                         variables.push_back(std::make_pair(params[j], type::ROMAN_NUM));
                     }
                 }
-
             }
             else
             {
+                std::cout << "[ERROR] " << procs[i] << " incorrect!\n";
+                if (res[2] != '(' && res[4] != ')')
+                {
+                    std::cout << "[ERROR] ')' or '(' was expected!\n";
+                    return false;
+                }
+
+                if (res[5] != ';')
+                {
+                    std::cout << "[ERROR] ';' was expected!\n";
+                }
+
                 return false;
             }
         }
