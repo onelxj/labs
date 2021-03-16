@@ -13,7 +13,7 @@ public:
     Analyst(const std::string& str) : text(str), checkRule(true), regular((
         "(\\w*)"
         "([\(])"
-        "([\\a-zIVX\,]+)"
+        "([\\a-zA-Z\,]+)"
         "([\)])"
         )) {};
     ~Analyst() {};
@@ -40,7 +40,7 @@ public:
     {
         if (!checkRule)
         {
-            std::cout << "[INFO] Error is in expression!\n";
+            std::cout << "[ERROR] Error is in expression!\n";
             return;
         }
         unsigned int countId = 1;
@@ -88,6 +88,18 @@ private:
 
     bool checkRulesAndParse()
     {
+        size_t t_pos = 0;
+        for (size_t i = 0; t_pos != text.size(); i++)
+        {
+            t_pos = text.find(')', t_pos);
+            if (t_pos == std::string::npos || text[t_pos + 1] != ';' && t_pos != text.size() - 1)
+            {
+                std::cout << "[ERROR] symbol ';' was expected\n";
+                return false;
+            }
+            t_pos++;
+        }
+
         std::vector<std::string> procs;
 
         while (std::count(text.begin(), text.end(), ';') != 0)
@@ -127,19 +139,33 @@ private:
                     {
                         variables.push_back(std::make_pair(params[j], type::ID));
                     }
-                    else
+                    else if (checkRoman(params[j]))
                     {
                         variables.push_back(std::make_pair(params[j], type::ROMAN_NUM));
                     }
                 }
-
             }
             else
             {
+                std::cout << "[ERROR] " << procs[i] << " incorrect!\n";
                 return false;
             }
         }
 
+        return true;
+    }
+
+    bool checkRoman(const std::string& str)
+    {
+        for (size_t i = 0; i < str.size(); i++)
+        {
+            if (!(str[i] == 'I' || str[i] == 'V' || str[i] == 'X'))
+            {
+                checkRule = false;
+                std::cout << "[ERROR] Unexpected argument: " << str << std::endl;
+                return false;
+            }
+        }
         return true;
     }
 
