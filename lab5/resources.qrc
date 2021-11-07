@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>pngkit_pause-button-png_57798.png</file>
+        <file>pngkit_play-png_4148.png</file>
+        <file>free-folder-icon-1484-thumb.png</file>
+        <file>pngkit_stop-hand-png_986817.png</file>
+    </qresource>
+</RCC>
